@@ -50,4 +50,16 @@ public class BookingService {
         repository.deleteById(id);
     }
 
+    //edit booking
+//    public Booking edit(BookingDTO bookingdto,Integer id){
+//        Booking booking = modelMapper.map(bookingdto,Booking.class);
+//        Booking bk = repository.findById(id)
+//                .map((book)->modelMapper(book,booking))
+//                .orElseThrow(()->new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND,"Booking id" + id +
+//                "does not exist !!!"
+//        ));
+//        return repository.saveAndFlush(bk);
+//    }
+
 }

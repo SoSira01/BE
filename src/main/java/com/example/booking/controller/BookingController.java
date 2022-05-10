@@ -34,5 +34,9 @@ public class BookingController {
         bookingservices.deleteById(id);
     }
 
+    @PutMapping("/{id}")
+    public Booking edit(@RequestBody BookingDTO bookingdto,Integer id){
+        return bookingservices.edit(bookingdto,id);
+    }
 
 }
