@@ -16,6 +16,9 @@ public class BookingDTO {
     private String bookingName;
     private Instant startTime;
     @JsonIgnore
-    private CategoryDTO category;
+    private Integer categoryId;
+    private String categoryName;
+    private Integer categoryDuration;
+    private String categoryDescription;
 
 }

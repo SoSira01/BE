@@ -1,7 +1,6 @@
 package com.example.booking.services;
 
 import com.example.booking.dtos.BookingDTO;
-import com.example.booking.dtos.DetailBookingDTO;
 import com.example.booking.entities.Booking;
 import com.example.booking.repositories.BookingRepository;
 import com.example.booking.utils.ListMapper;
@@ -34,13 +33,13 @@ public class BookingService {
     }
 
     //get booking by id
-    public DetailBookingDTO getBookingById(Integer bookingId) {
+    public BookingDTO getBookingById(Integer bookingId) {
         Booking booking = repository.findById(bookingId)
                 .orElseThrow(()->new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Booking id "+ bookingId+
                         "Does Not Exist !!!"
                 ));
-        return modelMapper.map(booking, DetailBookingDTO.class);
+        return modelMapper.map(booking, BookingDTO.class);
     }
 
     //delete booking
