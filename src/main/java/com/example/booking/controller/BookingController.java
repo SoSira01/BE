@@ -36,8 +36,8 @@ public class BookingController {
     }
 
     @PutMapping("/{id}")
-    public BookingDTO editBooking(@RequestBody EditBookingDTO editbookingdto, Integer id){
-        return bookingservices.editBooking(editbookingdto,id);
+    public BookingDTO editBooking(@RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
+        return bookingservices.editBooking(editbookingdto ,id);
     }
 
 }

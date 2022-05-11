@@ -51,20 +51,30 @@ public class BookingService {
                         id + " does not exist !!!"));
         repository.deleteById(id);
     }
+    //edit booking
+//    public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
 
-    public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
-
-        Booking booking = modelMapper.map(editbookingdto,Booking.class);
-
+//        Booking bk = repository.findById(id)
+//                .orElseThrow(()->new ResponseStatusException(
+//                HttpStatus.NOT_FOUND,"Booking id" + id +
+//                "does not exist !!!"
+//                ));
+//                bk.setEmail(booking.getEmail());
+//                bk.setStartTime(booking.getStartTime());
+//                bk.setNote(booking.getNote());
+//                repository.saveAndFlush(bk);
+//        return modelMapper.map(bk,BookingDTO.class);
+//    }
+//
+//}
+    public BookingDTO editBooking(EditBookingDTO editbookingdto,Integer id){
         Booking bk = repository.findById(id)
-                .orElseThrow(()->new ResponseStatusException(
-                HttpStatus.NOT_FOUND,"Booking id" + id +
-                "does not exist !!!"
-                ));
-                bk.setEmail(booking.getEmail());
-                bk.setStartTime(booking.getStartTime());
-                bk.setNote(booking.getNote());
-                repository.saveAndFlush(bk);
+                .orElseThrow(()-> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,"notfound :" +id
+        ));
+        bk.setStartTime(editbookingdto.getStartTime());
+        bk.setNote(editbookingdto.getNote());
+        repository.saveAndFlush(bk);
         return modelMapper.map(bk,BookingDTO.class);
     }
 
