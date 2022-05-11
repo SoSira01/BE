@@ -1,9 +1,12 @@
 package com.example.booking.services;
 
 import com.example.booking.dtos.BookingDTO;
+import com.example.booking.dtos.EditBookingDTO;
 import com.example.booking.entities.Booking;
 import com.example.booking.repositories.BookingRepository;
 import com.example.booking.utils.ListMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -12,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
 @Service
 public class BookingService {
     @Autowired
@@ -50,16 +52,20 @@ public class BookingService {
         repository.deleteById(id);
     }
 
-    //edit booking
-//    public Booking edit(BookingDTO bookingdto,Integer id){
-//        Booking booking = modelMapper.map(bookingdto,Booking.class);
-//        Booking bk = repository.findById(id)
-//                .map((book)->modelMapper(book,booking))
-//                .orElseThrow(()->new ResponseStatusException(
-//                        HttpStatus.NOT_FOUND,"Booking id" + id +
-//                "does not exist !!!"
-//        ));
-//        return repository.saveAndFlush(bk);
-//    }
+    public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
+
+        Booking booking = modelMapper.map(editbookingdto,Booking.class);
+
+        Booking bk = repository.findById(id)
+                .orElseThrow(()->new ResponseStatusException(
+                HttpStatus.NOT_FOUND,"Booking id" + id +
+                "does not exist !!!"
+                ));
+                bk.setEmail(booking.getEmail());
+                bk.setStartTime(booking.getStartTime());
+                bk.setNote(booking.getNote());
+                repository.saveAndFlush(bk);
+        return modelMapper.map(bk,BookingDTO.class);
+    }
 
 }

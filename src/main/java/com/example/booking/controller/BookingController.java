@@ -1,6 +1,7 @@
 package com.example.booking.controller;
 
 import com.example.booking.dtos.BookingDTO;
+import com.example.booking.dtos.EditBookingDTO;
 import com.example.booking.entities.Booking;
 import com.example.booking.services.BookingService;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +36,8 @@ public class BookingController {
     }
 
     @PutMapping("/{id}")
-    public Booking edit(@RequestBody BookingDTO bookingdto,Integer id){
-        return bookingservices.edit(bookingdto,id);
+    public BookingDTO editBooking(@RequestBody EditBookingDTO editbookingdto, Integer id){
+        return bookingservices.editBooking(editbookingdto,id);
     }
 
 }
