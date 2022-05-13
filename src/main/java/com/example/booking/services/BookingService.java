@@ -52,21 +52,6 @@ public class BookingService {
         repository.deleteById(id);
     }
     //edit booking
-//    public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
-
-//        Booking bk = repository.findById(id)
-//                .orElseThrow(()->new ResponseStatusException(
-//                HttpStatus.NOT_FOUND,"Booking id" + id +
-//                "does not exist !!!"
-//                ));
-//                bk.setEmail(booking.getEmail());
-//                bk.setStartTime(booking.getStartTime());
-//                bk.setNote(booking.getNote());
-//                repository.saveAndFlush(bk);
-//        return modelMapper.map(bk,BookingDTO.class);
-//    }
-//
-//}
     public BookingDTO editBooking(EditBookingDTO editbookingdto,Integer id){
         Booking bk = repository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(
@@ -77,5 +62,5 @@ public class BookingService {
         repository.saveAndFlush(bk);
         return modelMapper.map(bk,BookingDTO.class);
     }
-
+    
 }
