@@ -16,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class BookingService {
@@ -32,11 +34,17 @@ public class BookingService {
         List<Booking> BookingList = repository.findAll(Sort.by("startTime").descending());
         return  listMapper.mapList(BookingList,BookingDTO.class,modelMapper);
     }
-    //create booking
-    public Booking create(BookingDTO newBooking) {
-        Booking book = modelMapper.map(newBooking,Booking.class);
-        OverlapStartTime(newBooking.getCategoryId(),newBooking.getStartTime());
-        return repository.saveAndFlush(book);
+    //validate
+    private boolean checkEmail;
+    private boolean checkDate;
+    //validateEmail
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+                    Pattern.CASE_INSENSITIVE);
+
+    public static boolean validateEmail(String email) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        return matcher.find();
     }
 
     //overlap StartTime
@@ -47,8 +55,24 @@ public class BookingService {
                         "Does Not Exist !!!"
                 ));
         Date endTime = new Date(startTime.getTime() + (1000*60*duration.getDuration()));
-        List<Booking> book = repository.findAllByStartTime(startTime, endTime);
+        List<Booking> book = repository.findAllByStartTime(startTime,endTime);
         return book.size() == 0;
+    }
+    //create booking
+    public Booking create(BookingDTO newBooking) {
+        try {
+            Booking book = modelMapper.map(newBooking, Booking.class);
+            checkEmail = validateEmail(book.getEmail());
+            checkDate = OverlapStartTime(book.getCategory().getId(), book.getStartTime());
+            if (checkEmail && checkDate) {
+                return repository.saveAndFlush(book);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does Not Exist !!!");
+            }
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does Not Exist !!!", e.getCause());
+        }
     }
 
     //get booking by id
@@ -70,19 +94,26 @@ public class BookingService {
     }
     //Edit
     public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
-
-        Booking booking = modelMapper.map(editbookingdto,Booking.class);
-
-        Booking bk = repository.findById(id)
-                .orElseThrow(()->new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,"Booking id" + id +
-                        "does not exist !!!"
-                ));
-        bk.setEmail(booking.getEmail());
-        bk.setStartTime(booking.getStartTime());
-        bk.setNote(booking.getNote());
-        repository.saveAndFlush(bk);
-        return modelMapper.map(bk,BookingDTO.class);
+        try {
+            Booking booking = modelMapper.map(editbookingdto, Booking.class);
+            Booking bk = repository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "Booking id" + id +
+                            "does not exist !!!"
+                    ));
+            checkDate = OverlapStartTime(bk.getId(), bk.getStartTime());
+            bk.setEmail(booking.getEmail());
+            bk.setStartTime(booking.getStartTime());
+            bk.setNote(booking.getNote());
+            if (checkDate) {
+                return modelMapper.map(bk,BookingDTO.class);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does Not Exist !!!");
+            }
+        }
+                catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Does Not Exist !!!", e.getCause());
+            }
     }
 
 }
