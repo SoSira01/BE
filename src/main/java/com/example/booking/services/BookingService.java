@@ -3,10 +3,10 @@ package com.example.booking.services;
 import com.example.booking.dtos.BookingDTO;
 import com.example.booking.dtos.EditBookingDTO;
 import com.example.booking.entities.Booking;
+import com.example.booking.entities.Category;
 import com.example.booking.repositories.BookingRepository;
+import com.example.booking.repositories.CategoryRepository;
 import com.example.booking.utils.ListMapper;
-import lombok.Getter;
-import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -14,11 +14,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
+
 @Service
 public class BookingService {
     @Autowired
     private BookingRepository repository;
+    @Autowired
+    private CategoryRepository categoryrepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -30,14 +34,27 @@ public class BookingService {
     }
     //create booking
     public Booking create(BookingDTO newBooking) {
-         Booking book = modelMapper.map(newBooking,Booking.class);
+        Booking book = modelMapper.map(newBooking,Booking.class);
+        OverlapStartTime(newBooking.getCategoryId(),newBooking.getStartTime());
         return repository.saveAndFlush(book);
+    }
+
+    //overlap StartTime
+    public boolean OverlapStartTime(Integer categoryId, Date startTime){
+        Category duration = categoryrepository.findById(categoryId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Category id : "+ categoryId+
+                        "Does Not Exist !!!"
+                ));
+        Date endTime = new Date(startTime.getTime() + (1000*60*duration.getDuration()));
+        List<Booking> book = repository.findAllByStartTime(startTime, endTime);
+        return book.size() == 0;
     }
 
     //get booking by id
     public BookingDTO getBookingById(Integer bookingId) {
         Booking booking = repository.findById(bookingId)
-                .orElseThrow(()->new ResponseStatusException(
+                .orElseThrow(()-> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Booking id "+ bookingId+
                         "Does Not Exist !!!"
                 ));
@@ -51,16 +68,21 @@ public class BookingService {
                         id + " does not exist !!!"));
         repository.deleteById(id);
     }
-    //edit booking
-    public BookingDTO editBooking(EditBookingDTO editbookingdto,Integer id){
+    //Edit
+    public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
+
+        Booking booking = modelMapper.map(editbookingdto,Booking.class);
+
         Booking bk = repository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,"notfound :" +id
-        ));
-        bk.setStartTime(editbookingdto.getStartTime());
-        bk.setNote(editbookingdto.getNote());
+                .orElseThrow(()->new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,"Booking id" + id +
+                        "does not exist !!!"
+                ));
+        bk.setEmail(booking.getEmail());
+        bk.setStartTime(booking.getStartTime());
+        bk.setNote(booking.getNote());
         repository.saveAndFlush(bk);
         return modelMapper.map(bk,BookingDTO.class);
     }
-    
+
 }
