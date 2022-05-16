@@ -26,5 +26,4 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<Booking> bookings = new LinkedHashSet<>();
-
 }
