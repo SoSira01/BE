@@ -116,11 +116,13 @@ public class BookingService {
         bk.setStartTime(booking.getStartTime());
         bk.setNote(booking.getNote());
 
-        if (!OverlapStartTime(booking.getCategory().getId(), booking.getStartTime())) {
+        if (!OverlapStartTime(bk.getCategory().getId(), bk.getStartTime())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
 
         }
+        repository.saveAndFlush(bk);
         return modelMapper.map(bk,BookingDTO.class);
     }
+
 
 }
