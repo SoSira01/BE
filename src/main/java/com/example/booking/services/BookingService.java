@@ -41,7 +41,7 @@ public class BookingService {
     private boolean checkDate;
     //validateEmail
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+            Pattern.compile("^[A-Z\\d._%+-]+@[A-Z\\d.-]+\\.[A-Z]{2,6}$",
                     Pattern.CASE_INSENSITIVE);
 
     public static boolean validateEmail(String email) {
@@ -65,9 +65,9 @@ public class BookingService {
     public Booking create(BookingDTO newBooking) {
         Booking book = modelMapper.map(newBooking, Booking.class);
 
-//            if(validateEmail(book.getEmail())){
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email error");
-//            }
+            if(!validateEmail(book.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email error");
+            }
 
         if (!OverlapStartTime(book.getCategory().getId(), book.getStartTime())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
