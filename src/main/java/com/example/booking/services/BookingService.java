@@ -36,9 +36,6 @@ public class BookingService {
         return  listMapper.mapList(BookingList,BookingDTO.class,modelMapper);
     }
 
-    //validate
-    private boolean checkEmail;
-    private boolean checkDate;
     //validateEmail
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z\\d._%+-]+@[A-Z\\d.-]+\\.[A-Z]{2,6}$",
@@ -64,17 +61,13 @@ public class BookingService {
     //create booking
     public Booking create(BookingDTO newBooking) {
         Booking book = modelMapper.map(newBooking, Booking.class);
-
-            if(!validateEmail(book.getEmail())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email error");
-            }
-
-        if (!OverlapStartTime(book.getCategory().getId(), book.getStartTime())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
-
-        }
+//        if(!validateEmail(book.getEmail())){
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email error");
+//            }
+//        if (!OverlapStartTime(book.getCategory().getId(), book.getStartTime())) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
+//        }
         return repository.saveAndFlush(book);
-
     }
 
     //get booking by id
@@ -107,7 +100,6 @@ public class BookingService {
     //Edit
     public BookingDTO editBooking(EditBookingDTO editbookingdto, Integer id){
         Booking booking = modelMapper.map(editbookingdto, Booking.class);
-
         Booking bk = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Booking id" + id +
@@ -116,10 +108,6 @@ public class BookingService {
         bk.setStartTime(booking.getStartTime());
         bk.setNote(booking.getNote());
 
-        if (!OverlapStartTime(bk.getCategory().getId(), bk.getStartTime())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
-
-        }
         repository.saveAndFlush(bk);
         return modelMapper.map(bk,BookingDTO.class);
     }
