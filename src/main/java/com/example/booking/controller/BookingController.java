@@ -7,6 +7,7 @@ import com.example.booking.services.BookingService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.validation.Valid;
 import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,19 +27,17 @@ public class BookingController {
     }
     //create booking
     @PostMapping("")
-    public Booking create(@RequestBody BookingDTO newBooking){
+    public Booking create(@Valid @RequestBody BookingDTO newBooking){
         return bookingservices.create(newBooking);
     }
-
+    //delete booking
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id){
         bookingservices.deleteById(id);
     }
-
-    @PutMapping("/{id}")
-
-    public BookingDTO editBooking(@RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
+    //edit booking
+    @PatchMapping("/{id}")
+    public BookingDTO editBooking(@Valid  @RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
         return bookingservices.editBooking(editbookingdto ,id);
     }
-
 }

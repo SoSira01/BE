@@ -36,34 +36,22 @@ public class BookingService {
         return  listMapper.mapList(BookingList,BookingDTO.class,modelMapper);
     }
 
-    //validateEmail
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z\\d._%+-]+@[A-Z\\d.-]+\\.[A-Z]{2,6}$",
-                    Pattern.CASE_INSENSITIVE);
-
-    public static boolean validateEmail(String email) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-        return matcher.find();
-    }
-
     //overlap StartTime
-    public boolean OverlapStartTime(Integer categoryId, Date startTime){
-        Category duration = categoryrepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Category id : "+ categoryId+
-                        "Not Found ID to Overlap"
-                ));
-        Date endTime = new Date(startTime.getTime() + (1000*60*duration.getDuration()));
-        List<Booking> book = repository.findAllByStartTimeBetween(startTime, endTime);
-        return book.size() == 0;
-    }
+//    public boolean OverlapStartTime(Integer categoryId, Date startTime){
+//        Category duration = categoryrepository.findById(categoryId)
+//                .orElseThrow(() -> new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND, "Category id : "+ categoryId+
+//                        "Not Found ID to Overlap"
+//                ));
+//        Date endTime = new Date(startTime.getTime() + (1000*60*duration.getDuration()));
+//        List<Booking> book = repository.findAllByStartTimeBetween(startTime, endTime);
+//        return book.size() == 0;
+//    }
 
     //create booking
     public Booking create(BookingDTO newBooking) {
         Booking book = modelMapper.map(newBooking, Booking.class);
-//        if(!validateEmail(book.getEmail())){
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email error");
-//            }
+//
 //        if (!OverlapStartTime(book.getCategory().getId(), book.getStartTime())) {
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
 //        }
@@ -79,16 +67,6 @@ public class BookingService {
                 ));
         return modelMapper.map(booking, BookingDTO.class);
     }
-
-    //get booking by categoryId
-//    public BookingDTO getIdByCategory(Integer CategoryId) {
-//        Booking booking = repository.findById(CategoryId)
-//                .orElseThrow(()-> new ResponseStatusException(
-//                        HttpStatus.NOT_FOUND, "Category id : "+ CategoryId+
-//                        "Does Not Exist !!!"
-//                ));
-//        return modelMapper.map(booking, BookingDTO.class);
-//    }
 
     //delete booking
     public void deleteById(Integer id) {
@@ -107,10 +85,11 @@ public class BookingService {
                 ));
         bk.setStartTime(booking.getStartTime());
         bk.setNote(booking.getNote());
-
+//        if (!OverlapStartTime(bk.getCategory().getId(), bk.getStartTime())) {
+//           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "StartTime error");
+//         }
         repository.saveAndFlush(bk);
         return modelMapper.map(bk,BookingDTO.class);
     }
-
 
 }
