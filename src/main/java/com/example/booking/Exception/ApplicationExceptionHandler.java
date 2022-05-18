@@ -19,15 +19,7 @@ import java.util.List;
 @Setter
 @ControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Map<String,String> handlerInvalidArgument(MethodArgumentNotValidException ex){
-//        Map<String , String> errorMap = new HashMap<>();
-//        ex.getBindingResult().getFieldErrors().forEach(error -> {
-//            errorMap.put(error.getField(), error.getDefaultMessage());
-//        });
-//        return errorMap;
-//    }
+
      private BookingService service;
         public ResponseEntity<Object> handleMethodArgumentNotValid(
                 MethodArgumentNotValidException ex,
