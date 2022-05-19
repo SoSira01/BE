@@ -30,5 +30,4 @@ public class BookingDTO {
     private Integer categoryDuration;
     private String categoryDescription;
 
-
 }

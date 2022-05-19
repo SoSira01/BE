@@ -6,6 +6,7 @@ import com.example.booking.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -14,6 +15,7 @@ import java.util.List;
 public class CategoryController {
     @Autowired
     private CategoryService categoryservice;
+    //get all
     @GetMapping("")
     public List<CategoryDTO> getAllCategory() {
         return categoryservice.getCategory();
@@ -22,5 +24,10 @@ public class CategoryController {
     @GetMapping("/{id}")
     public CategoryDTO getCategoryById(@PathVariable Integer id){
         return  categoryservice.getCategoryById(id);
+    }
+    //edit
+    @PatchMapping("")
+    public CategoryDTO editCategory(@Valid @RequestBody CategoryDTO editcategorydto,@PathVariable Integer id){
+        return categoryservice.editCategory(editcategorydto, id);
     }
 }
