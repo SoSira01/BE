@@ -11,10 +11,10 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class CategoryDTO {
     private Integer id;
-
     private String categoryName;
     @NotNull
-    @Size(min = 1 ,max = 480 ,message = "duration must be lower than 480 or equal characters")
+    @Max(480)
+    @Min(1)
     private Integer duration;
     private String categoryDescription;
 

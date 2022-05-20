@@ -3,7 +3,6 @@ package com.example.booking.services;
 import com.example.booking.dtos.BookingDTO;
 import com.example.booking.dtos.EditBookingDTO;
 import com.example.booking.entities.Booking;
-import com.example.booking.entities.Category;
 import com.example.booking.repositories.BookingRepository;
 import com.example.booking.repositories.CategoryRepository;
 import com.example.booking.utils.ListMapper;
@@ -14,17 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class BookingService {
     @Autowired
     private BookingRepository repository;
-    @Autowired
-    private CategoryRepository categoryrepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired

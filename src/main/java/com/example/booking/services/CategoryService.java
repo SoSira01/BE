@@ -38,7 +38,11 @@ public class CategoryService {
                 ));
         return modelMapper.map(category, CategoryDTO.class);
     }
-
+    //Create
+    public Category create(CategoryDTO newCategory) {
+        Category category = modelMapper.map(newCategory, Category.class);
+        return repository.saveAndFlush(category);
+    }
     //Edit
     public CategoryDTO editCategory(CategoryDTO editcategorydto, Integer id){
         Category category = modelMapper.map(editcategorydto, Category.class);
@@ -47,12 +51,18 @@ public class CategoryService {
                         HttpStatus.BAD_REQUEST, "Booking id" + id +
                         "Not found ID to Edit"
                 ));
-        ct.setCategoryName(category.getCategoryName());
+        //ct.setCategoryName(category.getCategoryName());
         ct.setDuration(category.getDuration());
         ct.setCategoryDescription(category.getCategoryDescription());
 
         repository.saveAndFlush(ct);
         return modelMapper.map(ct,CategoryDTO.class);
     }
-
+    //delete booking
+    public void deleteById(Integer id) {
+        repository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        id + "Not Found ID To Delete"));
+        repository.deleteById(id);
+    }
 }
