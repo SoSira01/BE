@@ -37,6 +37,7 @@ public class CategoryController {
     public CategoryDTO editCategory(@Valid @RequestBody CategoryDTO editcategorydto,@PathVariable Integer id){
         return categoryservice.editCategory(editcategorydto, id);
     }
+    //delete
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id){
         categoryservice.deleteById(id);
