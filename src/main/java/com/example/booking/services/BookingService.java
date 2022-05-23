@@ -62,6 +62,12 @@ public class BookingService {
         return modelMapper.map(booking, BookingDTO.class);
     }
 
+    //get by categoryId
+    public List<BookingDTO> getBookingByCategoryId(Integer categoryId) {
+        List<Booking>  booking = repository.findBycategoryIdOrderbystartTime(categoryId);
+        return listMapper.mapList(booking, BookingDTO.class,modelMapper);
+    }
+
     //delete booking
     public void deleteById(Integer id) {
         repository.findById(id).orElseThrow(() ->
