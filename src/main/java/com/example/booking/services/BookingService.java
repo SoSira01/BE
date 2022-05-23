@@ -64,7 +64,7 @@ public class BookingService {
 
     //get by categoryId
     public List<BookingDTO> getBookingByCategoryId(Integer categoryId) {
-        List<Booking>  booking = repository.findBycategoryId(categoryId);
+        List<Booking>  booking = repository.findBycategoryIdOrderByStartTimeDesc(categoryId);
         return listMapper.mapList(booking, BookingDTO.class,modelMapper);
     }
 
