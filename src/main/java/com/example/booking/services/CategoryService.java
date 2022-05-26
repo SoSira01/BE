@@ -51,7 +51,7 @@ public class CategoryService {
                         HttpStatus.BAD_REQUEST, "Booking id" + id +
                         "Not found ID to Edit"
                 ));
-        //ct.setCategoryName(category.getCategoryName());
+        ct.setCategoryName(category.getCategoryName());
         ct.setDuration(category.getDuration());
         ct.setCategoryDescription(category.getCategoryDescription());
 
