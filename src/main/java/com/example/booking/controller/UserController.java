@@ -1,5 +1,6 @@
 package com.example.booking.controller;
 
+import com.example.booking.dtos.UserByIdDTO;
 import com.example.booking.dtos.UserDTO;
 import com.example.booking.entities.User;
 import com.example.booking.services.UserService;
@@ -23,7 +24,7 @@ public class UserController {
     private UserService userservices;
     //get by id
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable Integer id){
+    public UserByIdDTO getUserById(@PathVariable Integer id){
         return  userservices.getUserById(id);
     }
 

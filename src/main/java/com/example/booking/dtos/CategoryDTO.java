@@ -1,5 +1,5 @@
 package com.example.booking.dtos;
-import com.example.booking.Exception.Unique;
+import com.example.booking.Exception.UniqueCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 public class CategoryDTO {
     private Integer id;
     @NotNull
-    @Unique
+    @UniqueCategory
     private String categoryName;
     @NotNull
     @Max(480)

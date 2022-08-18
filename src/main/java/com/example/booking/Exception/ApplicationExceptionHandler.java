@@ -33,7 +33,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                 String error = fieldError.getDefaultMessage();
                 fieldErrors.add(new BookFieldError(field, error));
                 }
-            BookExceptionModel eventExceptionModel = new BookExceptionModel(HttpStatus.BAD_REQUEST, "Event attributes validation failed !!!", fieldErrors);
+            BookExceptionModel eventExceptionModel = new BookExceptionModel(HttpStatus.BAD_REQUEST, "Validation failed !!!", fieldErrors);
             return super.handleExceptionInternal(ex, eventExceptionModel, headers, status, request);
         }
     }

@@ -1,11 +1,13 @@
 package com.example.booking.services;
 
+import com.example.booking.dtos.UserByIdDTO;
 import com.example.booking.dtos.UserDTO;
 import com.example.booking.entities.User;
 import com.example.booking.repositories.UserRepository;
 import com.example.booking.utils.ListMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,18 +24,18 @@ public class UserService {
 
     //get all
     public List<UserDTO> getUser() {
-        List<User> user = repository.findAll();
+        List<User> user = repository.findAll(Sort.by("name").ascending());
         return listMapper.mapList(user, UserDTO.class, modelMapper);
     }
 
     //get user by id
-    public UserDTO getUserById(Integer userId) {
+    public UserByIdDTO getUserById(Integer userId) {
         User user = repository.findById(userId)
                 .orElseThrow(()->new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "category id "+ userId+
+                        HttpStatus.NOT_FOUND, "user id "+ userId+
                         "Does Not Exist !!!"
                 ));
-        return modelMapper.map(user, UserDTO.class);
+        return modelMapper.map(user, UserByIdDTO.class);
     }
     //Create
     public User create(UserDTO newUser) {
@@ -45,7 +47,7 @@ public class UserService {
         User user = modelMapper.map(edituserdto, User.class);
         User u = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Booking id" + id +
+                        HttpStatus.BAD_REQUEST, "user id" + id +
                         "Not found ID to Edit"
                 ));
         u.setName(user.getName());

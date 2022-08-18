@@ -2,6 +2,7 @@ package com.example.booking.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@DynamicInsert
 @Table(name = "user")
 public class User {
     @Id

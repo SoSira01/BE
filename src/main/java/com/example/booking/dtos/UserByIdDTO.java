@@ -6,19 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
-
+public class UserByIdDTO {
     private Integer id;
 
     @NotNull
     @UniqueUser
-    @Size(min = 1, max = 100 ,  message = "name must be between 1 to 100 characters")
     private String name;
 
     @NotNull
@@ -28,6 +29,10 @@ public class UserDTO {
     private String email;
 
     @NotNull
-//    @EnumUserRole(regexp = "student | admin | lecturer")
+//    @EnumUserRole(regexp = "student|admin|lecturer")
     private String role;
+
+    private Date createdOn;
+
+    private Date updatedOn;
 }
