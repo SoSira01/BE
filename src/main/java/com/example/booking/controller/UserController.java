@@ -1,7 +1,6 @@
 package com.example.booking.controller;
 
-import com.example.booking.dtos.UserByIdDTO;
-import com.example.booking.dtos.UserDTO;
+import com.example.booking.dtos.*;
 import com.example.booking.entities.User;
 import com.example.booking.services.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.Valid;
 import java.util.List;
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/user")
@@ -30,10 +28,14 @@ public class UserController {
 
     //create
     @PostMapping("")
-    public User create(@Valid @RequestBody UserDTO newUser){
+    public User create(@Valid @RequestBody AddUserDTO newUser){
         return userservices.create(newUser);
     }
-
+    //Matcher
+//    @PostMapping("/match")
+//    public String match(@Valid @RequestBody MatchUserDTO newMatch){
+//        return  userservices.match(newMatch);
+//    }
     //delete
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id){
@@ -42,7 +44,7 @@ public class UserController {
 
     //edit
     @PatchMapping("/{id}")
-    public UserDTO editBooking(@Valid  @RequestBody UserDTO userdto, @PathVariable Integer id){
-        return userservices.editUser(userdto ,id);
+    public EditUserDTO editBooking(@Valid  @RequestBody EditUserDTO edituserdto, @PathVariable Integer id){
+        return userservices.editUser(edituserdto ,id);
     }
 }

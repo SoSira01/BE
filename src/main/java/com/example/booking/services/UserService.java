@@ -1,7 +1,7 @@
 package com.example.booking.services;
 
-import com.example.booking.dtos.UserByIdDTO;
-import com.example.booking.dtos.UserDTO;
+import com.example.booking.Enum.Role;
+import com.example.booking.dtos.*;
 import com.example.booking.entities.User;
 import com.example.booking.repositories.UserRepository;
 import com.example.booking.utils.ListMapper;
@@ -22,6 +22,13 @@ public class UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private final PasswordService passwordService;
+
+    public UserService(PasswordService passwordService) {
+        this.passwordService = passwordService;
+    }
+
     //get all
     public List<UserDTO> getUser() {
         List<User> user = repository.findAll(Sort.by("name").ascending());
@@ -32,31 +39,39 @@ public class UserService {
     public UserByIdDTO getUserById(Integer userId) {
         User user = repository.findById(userId)
                 .orElseThrow(()->new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "user id "+ userId+
+                        HttpStatus.NOT_FOUND, "User Id "+ userId+
                         "Does Not Exist !!!"
                 ));
         return modelMapper.map(user, UserByIdDTO.class);
     }
     //Create
-    public User create(UserDTO newUser) {
+    public User create(AddUserDTO newUser) {
         User user = modelMapper.map(newUser, User.class);
+        user.setPassword(passwordService.securePassword(user.getPassword()));
         return repository.saveAndFlush(user);
     }
-    //Edit
-    public UserDTO editUser(UserDTO edituserdto, Integer id){
-        User user = modelMapper.map(edituserdto, User.class);
-        User u = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "user id" + id +
-                        "Not found ID to Edit"
-                ));
-        u.setName(user.getName());
-        u.setEmail(user.getEmail());
-        u.setRole(user.getRole());
-
-        repository.saveAndFlush(u);
-        return modelMapper.map(u,UserDTO.class);
+    //EDIT
+    public User mapUser(User existsUser, EditUserDTO edituserdto){
+        if(edituserdto.getName() != null){
+            existsUser.setName(edituserdto.getName().trim());
+        }
+        if(edituserdto.getEmail() != null){
+            existsUser.setEmail(edituserdto.getEmail());
+        }
+        if(edituserdto.getRole() != null){
+            existsUser.setRole(Role.valueOf(edituserdto.getRole()));
+        }
+        return existsUser;
     }
+
+    public EditUserDTO editUser(EditUserDTO edituserdto, Integer id) {
+        User user = repository.findById(id).map(o->mapUser(o, edituserdto))
+                .orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.BAD_REQUEST, "No ID : " + id));
+        repository.saveAndFlush(user);
+        return modelMapper.map(user, EditUserDTO.class);
+    }
+
     //delete booking
     public void deleteById(Integer id) {
         repository.findById(id).orElseThrow(() ->
@@ -64,4 +79,5 @@ public class UserService {
                         id + "Not Found ID To Delete"));
         repository.deleteById(id);
     }
+
 }

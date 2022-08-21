@@ -1,12 +1,14 @@
 package com.example.booking.entities;
 
+import com.example.booking.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Optional;
+
 @Getter
 @Setter
 @Entity
@@ -23,12 +25,19 @@ public class User {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "role", nullable = false, updatable = false)
-    private String role;
+    @Column(name = "password", nullable = false, length = 90)
+    private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @JsonIgnore
     @Column(name = "createdOn", insertable = false, updatable = false)
     private Date createdOn;
 
+    @JsonIgnore
     @Column(name = "updatedOn", insertable = false, updatable = false)
     private Date updatedOn;
+
 }

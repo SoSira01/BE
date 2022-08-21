@@ -3,29 +3,27 @@ package com.example.booking.Exception;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class EnumUserRoleExceptionHandler implements ConstraintValidator<EnumUserRole, Enum<?>> {
-    private Pattern pattern;
+public class EnumUserRoleExceptionHandler implements ConstraintValidator<EnumUserRole, String> {
+    private List<String> values;
 
     @Override
-    public void initialize(EnumUserRole annotation) {
-        try {
-            pattern = Pattern.compile(annotation.regexp());
-        } catch (PatternSyntaxException e) {
-            throw new IllegalArgumentException("invalid !! , Try again with Student , admin , lecturer", e);
-        }
+    public void initialize(EnumUserRole constraintAnnotation) {
+
+            values = Stream.of(constraintAnnotation.enumClass().getEnumConstants())
+                    .map(Enum::name)
+                    .collect(Collectors.toList());
     }
 
     @Override
-    public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
-        if (value == null) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if(value == null){
             return true;
         }
-
-        Matcher m = pattern.matcher(value.name());
-        return m.matches();
+            return  values.contains(value.toString());
+        }
     }
-}
+

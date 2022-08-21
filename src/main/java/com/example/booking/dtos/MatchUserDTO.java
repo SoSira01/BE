@@ -1,7 +1,5 @@
 package com.example.booking.dtos;
 
-import com.example.booking.Enum.Role;
-import com.example.booking.Exception.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,17 +8,18 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserByIdDTO {
-    private Integer id;
-    private String name;
+public class MatchUserDTO {
+
+    @Size(min = 1, max = 50 , message = "email must be between 1 to 50 characters")
+    @Email(message = "Must be well-formed as email address")
     private String email;
-    private String role;
-    private Date createdOn;
-    private Date updatedOn;
+
+    @NotNull
+    @Size(min = 8, max = 14 , message = "password must be between 8 to 14 characters")
+    private String password;
 }
