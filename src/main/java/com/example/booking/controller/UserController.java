@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     //get all
@@ -31,11 +31,7 @@ public class UserController {
     public User create(@Valid @RequestBody AddUserDTO newUser){
         return userservices.create(newUser);
     }
-    //Matcher
-//    @PostMapping("/match")
-//    public String match(@Valid @RequestBody MatchUserDTO newMatch){
-//        return  userservices.match(newMatch);
-//    }
+
     //delete
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id){

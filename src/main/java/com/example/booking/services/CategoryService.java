@@ -1,8 +1,6 @@
 package com.example.booking.services;
 
-import com.example.booking.dtos.BookingDTO;
 import com.example.booking.dtos.CategoryDTO;
-import com.example.booking.entities.Booking;
 import com.example.booking.entities.Category;
 import com.example.booking.repositories.CategoryRepository;
 import com.example.booking.utils.ListMapper;

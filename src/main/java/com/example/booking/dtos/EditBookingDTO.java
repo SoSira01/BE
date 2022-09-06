@@ -13,7 +13,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class EditBookingDTO {
     private Integer id;
-    @NotNull
     @FutureOrPresent
     private Date startTime;
     @Size(max = 500 ,message = "Notes must be lower than 500 or equal characters")

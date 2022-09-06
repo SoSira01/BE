@@ -1,5 +1,6 @@
 package com.example.booking.services;
 
+import com.example.booking.Enum.Role;
 import com.example.booking.Exception.BookExceptionModel;
 import com.example.booking.Exception.BookFieldError;
 import com.example.booking.dtos.MatchUserDTO;
@@ -7,18 +8,25 @@ import com.example.booking.entities.User;
 import com.example.booking.repositories.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.catalina.Session;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+
 @Getter
 @Setter
 @Service
-public class MatchService {
+public class MatchService  {
     private final UserRepository repository;
     private final ModelMapper modelMapper;
     private final PasswordService passwordService;
+
 
     @Autowired
     public MatchService(UserRepository repository, ModelMapper modelMapper, PasswordService passwordService) {
@@ -38,9 +46,10 @@ public class MatchService {
             boolean matchPass = passwordService.validatePassword(user.getPassword(),newMatch.getPassword());
 
             if(obj !=null && matchPass){
-                return new ResponseEntity<>("Password Matched", HttpStatus.OK);
+                return new ResponseEntity<>("Password Match", HttpStatus.OK);
+
             }else{
-                fieldError = new BookFieldError("Password","Password NOT Matched",HttpStatus.UNAUTHORIZED);
+                fieldError = new BookFieldError("Password","Password Incorrect",HttpStatus.UNAUTHORIZED);
                 bookExceptionModel = new BookExceptionModel(fieldError.getStatus(),"Validation failed",fieldError);
                 return new ResponseEntity<>(bookExceptionModel,fieldError.getStatus());
             }
