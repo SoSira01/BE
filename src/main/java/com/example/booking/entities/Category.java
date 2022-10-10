@@ -1,13 +1,14 @@
 package com.example.booking.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 @Getter
 @Setter
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "category")
 public class Category {
@@ -27,4 +28,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<Booking> bookings = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "eventCategory", cascade = CascadeType.ALL)
+    private Set<CategoryOwner> categoryOwners;
 }

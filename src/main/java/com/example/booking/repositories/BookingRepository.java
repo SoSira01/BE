@@ -8,5 +8,9 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findBycategoryIdOrderByStartTimeDesc(Integer categoryId);
-//    Booking findBookingByEmail(String email);
-    List<Booking> findBookingByEmailOrderByStartTimeDesc(String email);}
+    List<Booking> findByEmailAndCategoryIdOrderByStartTimeDesc(String email,Integer category);
+    List<Booking> findBookingByEmailOrderByStartTimeDesc(String userEmail);
+    List<Booking> findByIdAndEmail(Integer bid, String email);
+    List<Booking> findByEmail(String email);
+    Booking findAllById(Integer bid);
+}

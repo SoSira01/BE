@@ -2,15 +2,15 @@ package com.example.booking.entities;
 
 import com.example.booking.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "user")
 public class User {
@@ -39,5 +39,12 @@ public class User {
     @JsonIgnore
     @Column(name = "updatedOn", insertable = false, updatable = false)
     private Date updatedOn;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private Set<CategoryOwner> categoryOwners = new HashSet<>();
+
+//    public User(String name) {
+//        this.name = name;
+//    }
 
 }

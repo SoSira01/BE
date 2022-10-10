@@ -20,8 +20,8 @@ import java.util.List;
 public class BookingController {
     //get all working
     @GetMapping("")
-    public List<BookingDTO> getAllBooking(){
-        return  bookingservices.getBooking();
+    public List<BookingDTO> getAllBooking(HttpServletRequest request){
+        return  bookingservices.getBooking(request);
     }
     @Autowired
     private BookingService bookingservices;
@@ -31,43 +31,27 @@ public class BookingController {
     private UserRepository userRepository;
     //get by id working
     @GetMapping("/{id}")
-    public BookingDTO getBookingById(@PathVariable Integer id){
-        return  bookingservices.getBookingById(id);
+    public BookingDTO getBookingById(HttpServletRequest request,@PathVariable Integer id){
+        return  bookingservices.getBookingById(request,id);
     }
     //get by categoryId
     @GetMapping("/filter/{categoryId}")
-    public List<BookingDTO> getBookingByCategoryId(@PathVariable Integer categoryId){
-        return bookingservices.getBookingByCategoryId(categoryId);
+    public List<BookingDTO> getBookingByCategoryId(HttpServletRequest request,@PathVariable Integer categoryId){
+        return bookingservices.getBookingByCategoryId(request,categoryId);
     }
     //create booking
     @PostMapping("")
-    public Booking create(@Valid @RequestBody BookingDTO newBooking){
-        return bookingservices.create(newBooking);
+    public Booking create(HttpServletRequest request,@Valid @RequestBody BookingDTO newBooking){
+        return bookingservices.create(request,newBooking);
     }
     //delete booking
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Integer id){
-        bookingservices.deleteById(id);
+    public void deleteById(HttpServletRequest request,@PathVariable Integer id){
+        bookingservices.deleteById(request,id);
     }
     //edit booking
     @PatchMapping("/{id}")
-    public EditBookingDTO editBooking(@Valid  @RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
-        return bookingservices.editBooking(editbookingdto ,id);
+    public EditBookingDTO editBooking(HttpServletRequest request,@Valid @RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
+        return bookingservices.editBooking(request,editbookingdto,id);
     }
-//    @GetMapping("")
-//    public List<BookingDTO> getAllBooking(HttpServletRequest request){
-//        String requestToken = request.getHeader("Authorization").substring(7);
-//        String userName = jwtTokenUtil.getUsernameFromToken(requestToken);
-//        User user = userRepository.findByEmail(userName);
-//        if (user.getRole().name() == "student") {
-//            return bookingservices.getBookingByEmail(request);
-//        } if (user.getRole().name() == "lecturer") {
-//            return bookingservices.getBooking();
-//        } if (user.getRole().name() == "admin") {
-//            return bookingservices.getBooking();
-//        } else {
-//            List<BookingDTO> emptyBooking = new ArrayList<>();
-//            return emptyBooking;
-//        }
-//    }
 }
