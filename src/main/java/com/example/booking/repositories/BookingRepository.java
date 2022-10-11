@@ -13,4 +13,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByIdAndEmail(Integer bid, String email);
     List<Booking> findByEmail(String email);
     Booking findAllById(Integer bid);
+
 }

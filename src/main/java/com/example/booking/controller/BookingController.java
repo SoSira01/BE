@@ -7,6 +7,7 @@ import com.example.booking.entities.Booking;
 import com.example.booking.entities.User;
 import com.example.booking.repositories.UserRepository;
 import com.example.booking.services.BookingService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +42,7 @@ public class BookingController {
     }
     //create booking
     @PostMapping("")
-    public Booking create(HttpServletRequest request,@Valid @RequestBody BookingDTO newBooking){
+    public Booking create(HttpServletRequest request, @Valid @RequestBody BookingDTO newBooking){
         return bookingservices.create(request,newBooking);
     }
     //delete booking

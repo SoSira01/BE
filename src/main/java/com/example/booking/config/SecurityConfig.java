@@ -68,6 +68,8 @@ import java.util.Arrays;
                     .antMatchers(HttpMethod.POST,"/api/booking").permitAll()
                     .antMatchers(HttpMethod.PATCH,"/api/booking/*")
                        .hasAnyAuthority("admin","student","lecturer")
+//                    .antMatchers("/api/booking/*")
+//                       .hasAuthority("lecturer")
                     .antMatchers("/api/category").permitAll()
                     .antMatchers("/api/category/*")
                        .hasAnyAuthority("admin","lecturer")

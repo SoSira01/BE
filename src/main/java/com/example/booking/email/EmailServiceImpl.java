@@ -34,15 +34,19 @@ public class EmailServiceImpl implements EmailService {
     @Autowired private UserRepository userRepository;
 
     @Value("${spring.mail.username}") private String sender;
-    final private String emailSubject = "New Booking Confirmation";
+    private String setEmailSubject(Email userData) {
+        return "[OASIP] " + userData.getCategory() + " @ " + userData.getStartTime();
+    }
 
     public String setMsgBody(Email userData) {
         // Setting up necessary details
         User admin = userRepository.findByRole(Role.admin);
-        this.msgBody = "To : "+userData.getRecipientName()+", "+userData.getRecipient()+
-                " \n Your Booking Comfirmation : \n " +" \n Name : "+userData.getRecipientName()+" \n Email : "+userData.getRecipient() +
-                " \n Category : "+userData.getCategory() +" \n Start Time : "+userData.getStartTime() +" \n Note : "+userData.getNote() +
-                "\n \n If you found any failure on your booking confirmation, " +"\n please contract our admin for editing your request" +"\n Contract us : "+admin.getEmail();
+        this.msgBody = 
+
+                // "To : "+userData.getRecipientName()+", "+userData.getRecipient()+
+                " \n Your Booking Comfirmation : \n " +" \n Booking Name : "+userData.getRecipientName()+" \n Email : "+userData.getRecipient() +
+                " \n Event Category : "+userData.getCategory() +" \n When : "+userData.getStartTime() +" \n Note : "+userData.getNote();
+                // "\n \n If you found any failure on your booking confirmation, " +"\n please contract our admin for editing your request" +"\n Contract us : "+admin.getEmail();
         return msgBody;
     }
 
@@ -56,7 +60,8 @@ public class EmailServiceImpl implements EmailService {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(sender);
             mailMessage.setTo(details.getRecipient());
-            mailMessage.setSubject(emailSubject);
+            mailMessage.setSubject(setEmailSubject(details));
+            mailMessage.setReplyTo("noreply@intproj21.sit.kmutt.ac.th");
             mailMessage.setText(setMsgBody(details));
             System.out.println(setMsgBody(details));
             // Sending the mail
@@ -82,7 +87,7 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(sender);
             mimeMessageHelper.setTo(details.getRecipient());
-            mimeMessageHelper.setSubject(emailSubject);
+            mimeMessageHelper.setSubject(setEmailSubject(details));
             mimeMessageHelper.setText(setMsgBody(details));
             // Adding the attachment
             FileSystemResource file = new FileSystemResource(new File(details.getAttachment()));

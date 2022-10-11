@@ -67,7 +67,7 @@ public  class JwtUserService implements UserDetailsService {
                     System.out.println("access token : " + token);
                     final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
                     System.out.println("refresh token : " + refreshToken);
-                    return new ResponseEntity<>(new JwtResponse("Login Successful","Password Match",token,refreshToken,role),HttpStatus.OK); //200
+                    return new ResponseEntity<>(new JwtResponse("Login Successful","Password Match",token,refreshToken,role),HttpStatus.OK); //200   1 min in Token And 3 min token show in refreshToken file
             }else{
                 fieldError = new BookFieldError("Password","Password Incorrect",HttpStatus.UNAUTHORIZED); //401
                 bookExceptionModel = new BookExceptionModel(fieldError.getStatus(),"Validation failed",fieldError);
@@ -90,22 +90,6 @@ public  class JwtUserService implements UserDetailsService {
     
     JwtResponse jwtRes;
 
-//     public ResponseEntity<?> getRefreshToken(HttpServletRequest request){
-//         String requestRefreshToken = request.getHeader("Authorization").substring(7);
-//         String userRefreshToken = jwtTokenUtil.getUsernameFromToken(requestRefreshToken);
-//         UserDetails userDetails = loadUserByUsername(userRefreshToken);
-//         String Token = jwtTokenUtil.generateRefreshToken(userDetails);
-//         System.out.println("request token : "+requestRefreshToken);
-//         System.out.println(checkExpired(requestRefreshToken));
-
-//         if(checkExpired(requestRefreshToken).equals(true)) {
-// //            fieldError = new BookFieldError("Refresh Token","Token already expired",HttpStatus.OK);//200
-// //            bookExceptionModel = new BookExceptionModel(fieldError.getStatus(),"Token already expired",fieldError);
-// //            jwtRes =  new JwtResponse("Access Token already expired","Generate Refresh Token",requestRefreshToken,Token);
-// //            return new ResponseEntity<>(jwtRes,fieldError.getStatus());
-//             return new ResponseEntity<>( new JwtResponse("Access Token already expired","Generate Refresh Token",requestRefreshToken,Token), HttpStatus.OK);
-//         }
-
     public ResponseEntity<?> getRefreshToken(HttpServletRequest request) {
         String stringBody = "";
         HttpStatus status = HttpStatus.UNAUTHORIZED;
@@ -114,12 +98,10 @@ public  class JwtUserService implements UserDetailsService {
         try {
             System.out.println("request Refresh Token : " + requestRefreshToken);
             if (checkExpired(requestRefreshToken).equals(true)) {
-                String userRefreshToken = jwtTokenUtil.getUsernameFromToken(requestRefreshToken);
-                UserDetails userDetails = loadUserByUsername(userRefreshToken);
-                String Token = jwtTokenUtil.generateRefreshToken(userDetails);
-//                System.out.println("request token : " + requestRefreshToken);
-//                System.out.println("req. token : "+requestRefreshToken+"\n"+"ref. token : "+Token);
-                return new ResponseEntity<>(new JwtResponse("Generate Successful", "Refresh Token", requestRefreshToken, Token,null),HttpStatus.OK);
+                String Token = jwtTokenUtil.getUsernameFromToken(requestRefreshToken);
+                UserDetails userDetails = loadUserByUsername(Token);
+                String newToken = jwtTokenUtil.generateToken(userDetails);
+                return new ResponseEntity<>(new JwtResponse("Generate Successful", "Refresh Token", Token, newToken,null),HttpStatus.OK); //old 1 min in token and new 1 min token show in refreshToken file
             } else {
                 System.out.println("request Token (exp.) : " + requestRefreshToken);
             }
