@@ -2,12 +2,15 @@ package com.example.booking.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "booking")
 public class Booking {
@@ -32,4 +35,16 @@ public class Booking {
     @JoinColumn(name = "Category_CategoryId", nullable = false)
     private Category category;
 
+    @Column(name = "FileName")
+    private String fileName;
+
+    @Column(name = "FileType")
+    private String fileType;
+
+    @Column(name = "FileUrl")
+    private String fileUrl;
+
+    @Lob
+    @Column(name = "FileAttechment")
+    private byte[] file;
 }

@@ -7,8 +7,12 @@ import com.example.booking.entities.Booking;
 import com.example.booking.entities.User;
 import com.example.booking.repositories.UserRepository;
 import com.example.booking.services.BookingService;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,9 +46,17 @@ public class BookingController {
     }
     //create booking
     @PostMapping("")
-    public Booking create(HttpServletRequest request, @Valid @RequestBody BookingDTO newBooking){
-        return bookingservices.create(request,newBooking);
+    @RequestMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Booking create(HttpServletRequest request, 
+        @Valid @RequestPart("booking") BookingDTO newBooking, 
+        @RequestPart(value = "file",required = false) @Nullable MultipartFile file){
+
+        if(file == null){
+            return bookingservices.create(request,newBooking);
+        }
+        return bookingservices.createWithFile(request,newBooking,file);
     }
+
     //delete booking
     @DeleteMapping("/{id}")
     public void deleteById(HttpServletRequest request,@PathVariable Integer id){
@@ -55,4 +67,5 @@ public class BookingController {
     public EditBookingDTO editBooking(HttpServletRequest request,@Valid @RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
         return bookingservices.editBooking(request,editbookingdto,id);
     }
+    
 }

@@ -3,15 +3,18 @@ package com.example.booking.dtos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.validation.constraints.*;
-
+import javax.persistence.GeneratedValue;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
-public class BookingDTO {
+public class BookingWithFileDTO {
     private Integer id;
     @NotNull
     @Size(min = 1, max = 100 ,  message = "Booking name must be between 1 to 100 characters")
@@ -32,7 +35,10 @@ public class BookingDTO {
     private String categoryDescription;
 
     private String fileName;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String fileURL;
     private String fileType;
+    private byte[] fileByte;
 
 }
