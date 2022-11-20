@@ -64,8 +64,9 @@ public class BookingController {
     }
     //edit booking
     @PatchMapping("/{id}")
-    public EditBookingDTO editBooking(HttpServletRequest request,@Valid @RequestBody EditBookingDTO editbookingdto,@PathVariable Integer id){
-        return bookingservices.editBooking(request,editbookingdto,id);
+    public EditBookingDTO editBooking(HttpServletRequest request,@Valid @RequestPart("booking") EditBookingDTO editbookingdto,
+                                      @PathVariable Integer id, @RequestPart(value = "file",required = false) @Nullable MultipartFile file){
+        return bookingservices.editBooking(request,editbookingdto,id,file);
     }
     
 }

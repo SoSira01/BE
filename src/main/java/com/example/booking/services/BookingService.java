@@ -19,13 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.example.booking.Exception.UniqueFileNameException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
+import com.example.booking.Exception.*;
 
 import com.example.booking.Exception.BookExceptionModel;
 import com.example.booking.Exception.BookFieldError;
@@ -140,9 +140,6 @@ public class BookingService {
             userName = jwtTokenUtil.getUsernameFromToken(requestToken.substring(7));
             user = userRepository.findByEmail(userName);
         }
-//        if( file.getSize() > 10 * 1024 * 1024 ) {
-//            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"File cannot more than 10 MB.");
-//        }
         try{
                 if ( requestToken == null || ( user.getRole().name() != "lecturer" &&
                         (requestToken.intern() == "" || user.getRole().name() == "admin"
@@ -161,7 +158,7 @@ public class BookingService {
             if( requestToken != null && user.getRole().name() == "student"){
                 throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"The booking email must be the same as the student's email !",ex);
             }
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Error with Something",ex);
         }
     }
 
@@ -247,23 +244,63 @@ public class BookingService {
     }
 
     //EDIT
-    public Booking mapBooking(Booking existsBooking, EditBookingDTO editbookingdto){
+    public Booking mapBooking(Booking existsBooking, EditBookingDTO editbookingdto, @Nullable MultipartFile editFile) throws IOException {
+        if (editbookingdto.getStartTime() == null && editbookingdto.getNote() == null) {
+            if(editFile != null && editFile.getSize() == 0) {
+                throw new RuntimeExceptionHandler("Not found any field need to edit !");
+            }
+        }
         if(editbookingdto.getNote() != null){
             existsBooking.setNote(editbookingdto.getNote().trim());
         }
         if(editbookingdto.getStartTime() != null){
             existsBooking.setStartTime(editbookingdto.getStartTime());
         }
+        if (existsBooking.getFileName() == null) {
+            System.out.println("old OASIP is null");
+        }
+        if (editFile == null) {
+            System.out.println("new OASIP is null");
+            existsBooking.setFileName(null);
+            existsBooking.setFileType(null);
+            existsBooking.setFile(null);
+        }
+        if (editFile != null){
+            System.out.println("new OASIP without .intern() :: "+ Objects.equals(editFile.getOriginalFilename(), existsBooking.getFileName()));
+        }
+        if (editFile != null && existsBooking.getFileName() != null && Objects.equals(editFile.getOriginalFilename(), existsBooking.getFileName())) {
+            System.out.println("Check file name with previous's : Error (Duplicate) ");
+            throw new UniqueFileNameException("File name already exists!! : File must not duplicate or different from before");
+        }
+        if (editFile != null && editFile.getSize() != 0 &&
+                ( !Objects.equals(editFile.getOriginalFilename(), existsBooking.getFileName()) || existsBooking.getFileName() == null )) {
+            System.out.println("OASIP :: "+existsBooking.getFileName());
+            System.out.println("New File :: "+editFile.getOriginalFilename().intern());
+
+            existsBooking.setFileName(editFile.getOriginalFilename());
+            existsBooking.setFileType(editFile.getContentType());
+            existsBooking.setFile(editFile.getBytes());
+        }
+
+        System.out.println(existsBooking);
         return existsBooking;
     }
 
-    public EditBookingDTO editBooking(HttpServletRequest request,EditBookingDTO editbookingdto, Integer id) {
+    public EditBookingDTO editBooking(HttpServletRequest request,EditBookingDTO editbookingdto, Integer id, @Nullable MultipartFile file) {
         String requestToken = request.getHeader("Authorization").substring(7);
         String userName = jwtTokenUtil.getUsernameFromToken(requestToken);
         User user = userRepository.findByEmail(userName);
 
         if ( user.getRole().name() == "admin" || (user.getRole().name() == "student" && bookingRepository.findByIdAndEmail(id,userName).size() != 0)) {
-            Booking booking = bookingRepository.findById(id).map(o->mapBooking(o, editbookingdto))
+            Booking booking = bookingRepository.findById(id).map(o-> {
+                        try {
+                            if(file != null) System.out.println("-------" + file.getSize()+" " +"Byte"+"-------");
+                            return mapBooking(o, editbookingdto, file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return o;
+                    })
             .orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.FORBIDDEN, "No ID : " + id));
                     bookingRepository.saveAndFlush(booking);
@@ -285,74 +322,6 @@ public class BookingService {
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + bk.getFileName() + "\"")
                 .body(bk.getFile());
-    }
-
-    // Loading File
-    public ResponseEntity<?> getFile(HttpServletRequest request, String name,Integer id) {
-            String requestToken = request.getHeader("Authorization");
-            Booking bk = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Can't Get Booking ID: " + id
-            ));
-            String userName = null;
-            User user = null;
-            String typeFile = bk.getFileType();
-
-            if ( requestToken != null ) {
-                userName = jwtTokenUtil.getUsernameFromToken(requestToken.substring(7));
-                user = userRepository.findByEmail(userName);
-            }
-            try{
-                if ( requestToken == null || user.getRole().name() == "lecturer"
-                        || user.getRole().name() == "admin" || user.getRole().name() == "student"
-                        || requestToken.intern() == "" ) {
-                    return ResponseEntity.ok()
-                            .header(HttpHeaders.CONTENT_DISPOSITION,
-                                    "attachment; filename=\"" + bk.getFileName() + "\"")
-                            .header(HttpHeaders.CONTENT_TYPE,typeFile)
-                            .body(bk.getFile());
-                } else {
-                    return new ResponseEntity<>("Cannot loading this file",HttpStatus.NOT_FOUND);
-                }
-            } catch (Exception e) {
-                if( requestToken != null && (user.getRole().name() == "student" || user.getRole().name() == "lecturer" || user.getRole().name() == "admin" )){
-                    throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Error with authorize",e);
-                }
-                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Error without authorize",e);
-            }
-    }
-
-    // Viewing File
-    public ResponseEntity<?> viewFile(HttpServletRequest request, String name,Integer id) {
-        String requestToken = request.getHeader("Authorization");
-        Booking bk = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Can't Get Booking ID: " + id
-        ));
-        String userName = null;
-        User user = null;
-        String typeFile = bk.getFileType();
-
-        if ( requestToken != null ) {
-            userName = jwtTokenUtil.getUsernameFromToken(requestToken.substring(7));
-            user = userRepository.findByEmail(userName);
-        }
-        try{
-            if ( requestToken == null || user.getRole().name() == "lecturer"
-                    || user.getRole().name() == "admin" || user.getRole().name() == "student"
-                    || requestToken.intern() == "" ) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION,
-                                "inline; filename=\"" + bk.getFileName() + "\"")
-                        .header(HttpHeaders.CONTENT_TYPE,typeFile)
-                        .body(bk.getFile());
-            } else {
-                return new ResponseEntity<>("Cannot viewing this file",HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            if( requestToken != null && (user.getRole().name() == "student" || user.getRole().name() == "lecturer" || user.getRole().name() == "admin" )){
-                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Error with authorize",e);
-            }
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Error without authorize",e);
-        }
     }
 
     // public boolean validateOverlap(BookingDTO newbook){
