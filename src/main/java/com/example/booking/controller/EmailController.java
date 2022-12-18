@@ -25,4 +25,11 @@ public class EmailController {
         return status;
     }
 
+    // Set sending a email to contact admin
+    @PostMapping("/sendProblemMail")
+    public String sendToAdminMail(@RequestBody Email details)
+    {
+        String status = emailService.sendToAdminMail(details);
+        return status;
+    }
 }

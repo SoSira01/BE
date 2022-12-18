@@ -18,6 +18,7 @@ public class Email {
     // Class data members
     private String recipientName;
     private String recipient;
+    private String selfTopic;
     private String category;
     private Date startTime;
     private String note;

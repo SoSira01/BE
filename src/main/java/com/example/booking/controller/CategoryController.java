@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.example.booking.entities.Category;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
+import javax.servlet.http.HttpServletRequest;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,17 +32,25 @@ public class CategoryController {
     }
     //create
     @PostMapping("")
+    @PreAuthorize("hasAuthority('admin')")
     public Category create(@Valid @RequestBody CategoryDTO newCategory){
         return  categoryservice.create(newCategory);
     }
     //edit
     @PatchMapping("/{id}")
-    public CategoryDTO editCategory(@Valid @RequestBody CategoryDTO editcategorydto,@PathVariable Integer id){
-        return categoryservice.editCategory(editcategorydto, id);
+    @PreAuthorize("hasAnyAuthority('admin','lecturer')")
+    public CategoryDTO editCategory(HttpServletRequest request,@Valid @RequestBody CategoryDTO editcategorydto,@PathVariable Integer id){
+        return categoryservice.editCategory(request,editcategorydto, id);
     }
     //delete
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public void deleteById(@PathVariable Integer id){
         categoryservice.deleteById(id);
+    }
+    //check permission in category
+    @GetMapping("/{id}/permission")
+    public ResponseEntity<?> checkPermission(HttpServletRequest request,@PathVariable Integer id) {
+        return categoryservice.checkPermission(request,id);
     }
 }

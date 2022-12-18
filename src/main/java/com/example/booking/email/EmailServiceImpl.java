@@ -102,4 +102,38 @@ public class EmailServiceImpl implements EmailService {
             return "Error while sending mail! : "+e;
         }
     }
+
+    // Method 3
+    // To set sending a email to contact admin
+    public String sendToAdminMail(Email details)
+    {
+        User us = userRepository.findByEmail(details.getRecipient());
+        // Try block to check for exceptions
+        try {
+            // Creating a simple mail message
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            System.out.println(sender);
+            mailMessage.setFrom(sender);
+            mailMessage.setTo(sender);
+//            mailMessage.setTo(userRepository.findByRole(Role.admin).getEmail());
+//            System.out.println(userRepository.findByRole(Role.admin).getEmail());
+            if( us == null ) {
+                mailMessage.setSubject("Unauthorize user would like to report an issue with OASIP-SSI5");
+                mailMessage.setText("Reporter Email : "+details.getRecipient()+"\n"+"Topic / The problem need to report : "+details.getSelfTopic()+"\n"+"Description : "+details.getNote()+"\n");
+            } if( us != null ) {
+                mailMessage.setSubject("(ID: "+us.getId()+") would like to report an issue with OASIP-SSI5");
+                mailMessage.setText("Reporter ID : "+us.getId()+" , Reporter Name : " +us.getName()+"\n"
+                        +"Topic / The problem need to report : "+details.getSelfTopic()+"\n"
+                        +"Description : "+details.getNote()+"\n");
+            }
+
+            // Sending the mail
+            javaMailSender.send(mailMessage);
+            return "Mail Sent Successfully...";
+        }
+        // Catch block to handle the exceptions
+        catch (Exception e) {
+            return "Error while Sending Mail : "+e;
+        }
+    }
 }

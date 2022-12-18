@@ -13,4 +13,8 @@ public interface EmailService {
     // Method
     // To send an email with attachment
     String sendMailWithAttachment(Email details);
+
+    // Method
+    // To set sending a email to contact admin
+    String sendToAdminMail(Email details);
 }
